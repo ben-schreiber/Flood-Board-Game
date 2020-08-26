@@ -34,9 +34,9 @@ class Heuristics:
         min_point = min(self.all_neighbors, key=dist_func)
         return dist_func(min_point)
 
-    def number_covered(self):
-        """Returns the number of cells 'conquered' already"""
-        return len(self.all_neighbors)
+    def number_uncovered(self):
+        """Returns the number of cells not 'conquered' already"""
+        return self.board.width * self.board.height - len(self.all_neighbors)
 
     def _vertical_perimeter_sum(self):
         """Returns all of the vertical perimeter edges"""
@@ -68,8 +68,8 @@ class Heuristics:
                     in_conquered = False  # Indicate that we have left the perimeter
         return total
 
-    def number_border_covered(self):
-        """Returns the number of cells on the border covered"""
+    def number_border_uncovered(self):
+        """Returns the number of cells on the border not covered"""
         total = 0
         for x, y in self.all_neighbors:  # Check corners individually
             if (x == 0 and y == 0) or \
@@ -79,7 +79,8 @@ class Heuristics:
                 total += 1
             elif x == 0 or y == 0 or x == self.board.height - 1 or y == self.board.width - 1:
                 total += 1
-        return total
+        total_border = 2 * self.board.height + 2 * (self.board.width - 2)
+        return total_border - total
 
     def number_corners_covered(self):
         """Returns the number of corners covered"""
@@ -95,21 +96,25 @@ class Heuristics:
         return total
 
     def perimeter(self):
-        """Returns the size of the perimeter around the 'conquered' area"""
+        """Returns the size of the border of the board minus the size of the perimeter around the 'conquered' area"""
         horizontal_sum = self._horizontal_perimeter_sum()
         vertical_sum = self._vertical_perimeter_sum()
-        num_border_edges = self.number_border_covered()
+        num_border_edges = self.number_border_uncovered()
         num_corners_covered = self.number_corners_covered()
-        return horizontal_sum + vertical_sum - num_border_edges - num_corners_covered
+
+        total_border = 2 * self.board.height + 2 * (self.board.width - 2)
+        perimeter = horizontal_sum + vertical_sum - num_border_edges - num_corners_covered
+
+        return total_border - perimeter
 
     def get_weighted_sum(self, null=False):
         """Returns a weighted sum of all of the heuristics in the class"""
         if null:  # Null heuristic
             return 0
         perimeter = self.perimeter()
-        border = self.number_border_covered()
+        border = self.number_border_uncovered()
         corner_dist = self.distance_to_corner()
-        total_covered = self.number_covered()
+        total_covered = self.number_uncovered()
 
         perimeter_weight = 1
         border_weight = 1
@@ -125,4 +130,4 @@ if __name__ == "__main__":
     test = Board()
     print(test)
     heur = Heuristics(test)
-    print(heur.number_covered())
+    print(heur.number_uncovered())

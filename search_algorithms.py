@@ -40,7 +40,7 @@ def uniform_cost_search(problem):
     """
     Search the node of least total cost first.
     """
-    return a_star_search(problem)
+    return a_star_search(problem, null=True)
 
 
 def a_star_search(problem, null=False):

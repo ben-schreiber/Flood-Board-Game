@@ -105,7 +105,7 @@ if __name__ == "__main__":
 
     game = Game(args.size, args.start_point, args.move_allow, args.jokers)
 
-    if args.search: # If we want to run this game with an AI agent and not allow a user input
+    if args.search:  # If we want to run this game with an AI agent and not allow a user input
         game.run_search_agent_game(args.search, args.heuristic)
     else:  # Regular game using user input
         game.run_user_game()
