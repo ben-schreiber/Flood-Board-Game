@@ -7,7 +7,7 @@ class Game:
     GAME_OVER_WIN_MSG = 'Game Over! You Won!'
     INVALID_INPUT_MSG = 'Invalid input. Please enter one of the following colors: '
     KNIGHT_HOTKEY = Board.KNIGHT
-    HINT_HOTKEY = 'h'
+    HINT_HOTKEY = 'H'
     HOTKEYS = [KNIGHT_HOTKEY, HINT_HOTKEY]
 
     def __init__(self, size=(18, 18), starting_point=(0, 0), move_allowance=21, num_jokers=0):
@@ -41,9 +41,10 @@ class Game:
         print(Game.INVALID_INPUT_MSG)
         print(Board.COLORS)
 
-    def __valid_input(self, input_letter):
+    @staticmethod
+    def __valid_input(input_letter):
         """Returns True iff the input is one of the colors available or a special hotkey"""
-        return input_letter.upper() in Board.COLORS or input_letter in Game.HOTKEYS
+        return input_letter in Board.COLORS or input_letter in Game.HOTKEYS
 
     def run_user_game(self):
         """Manages the entire game logic"""
@@ -60,14 +61,12 @@ class Game:
         Gets an input from the user. If valid, returns that input; otherwise, ask for a new input
         :return: A valid input
         """
-        invalid_input = True
-        while invalid_input:
-            user_input = input("{}/{} Moves. Insert Color:\n".format(self.move_num, self.move_allowance))
+        while True:
+            user_input = input(f"{self.move_num}/{self.move_allowance} Moves. Insert Color:\n")
+            user_input = user_input.upper()
             if self.__valid_input(user_input):
-                invalid_input = False
-                break
+                return user_input
             self.__invalid_input_msg()
-        return user_input
 
     def game_over(self):
         """Returns True iff the board is colored entirely in the same color or all moves have been used"""
@@ -77,12 +76,12 @@ class Game:
         """
         Runs an AI search agent to obtain a sequence of actions and then applies them to the board
         :param agent_name: A string with the name of the search algorithm
-        :param heuristic: A string with the name of the heuristic to use
+        :param heuristic_name: A string with the name of the heuristic to use
         """
         from search_problems import FillProblem
         from search_algorithms import run_search_algorithm
         problem = FillProblem(self.board)
-        moves = run_search_algorithm(agent_name, problem, heuristic_name)
+        moves = run_search_algorithm(agent_name, problem, heuristic_name == 'null')
         for move in moves:
             self.board.apply_color_move(move)
             self.move_num += 1
@@ -90,7 +89,6 @@ class Game:
             print(self.board)
         print(f'Number of nodes expanded: {problem.expanded}')
         print(f'Number of moves required: {len(moves)}')
-
 
 
 if __name__ == "__main__":

@@ -9,8 +9,8 @@ class Board:
     GREEN = 'G'
     RED = 'R'
     COLORS = [YELLOW, BLUE, GREEN, RED]
-    NORMAL = 'n'
-    KNIGHT = 'k'
+    NORMAL = 'N'
+    KNIGHT = 'K'
     KNIGHT_MODE_ON_MSG = 'Knight mode toggled on!'
     KNIGHT_MODE_OFF_MSG = 'Knight mode toggled off!'
 
@@ -18,7 +18,7 @@ class Board:
         self.height, self.width = size
         self.starting_point = starting_point
         if starting_point[0] < 0 or starting_point[0] >= self.height or \
-            starting_point[1] < 0 or starting_point[1] >= self.width:
+                starting_point[1] < 0 or starting_point[1] >= self.width:
             self.starting_point = (0, 0)
         self.board = self.__init_random_board()
         self.jokers = jokers
@@ -35,6 +35,15 @@ class Board:
             new_board.joker_locations = deepcopy(self.joker_locations)
         return new_board
 
+    def transpose_board(self):
+        """Returns a copy of the transposed board"""
+        rotated_board = [[self.board[j][i] for j in range(self.height)] for i in range(self.width)]
+        new_board = self.copy()
+        new_board.width = self.height
+        new_board.height = self.width
+        new_board.board = rotated_board
+        return new_board
+
     def toggle_mode(self):
         """Toggles the game mode between normal and knight"""
         if self.mode == Board.NORMAL:
@@ -48,7 +57,7 @@ class Board:
         """
         Initializes the stored number of jokers and places them across the board
         """
-        cells = [(x, y) for x in range(self.width) for y in range(self.height)]
+        cells = [(row, col) for row in range(self.height) for col in range(self.width)]
         return sample(cells, self.jokers)
 
     def __init_random_board(self):
@@ -107,16 +116,16 @@ class Board:
         Applies the given color to the board
         :param color: A color in the form of a single char
         """
-        all_neighbors = self.find_extended_neighbors(self.starting_point[0], self.starting_point[1], {self.starting_point}, color)
+        all_neighbors = self.find_extended_neighbors(self.starting_point[0], self.starting_point[1], {self.starting_point})
         self.color_neighbors(all_neighbors, color)
 
-    def find_extended_neighbors(self, row, col, neighbors_list, color):
+    def find_extended_neighbors(self, row, col, neighbors_list):
         """
         Locates all of the neighbors of the same color
         :param row: The row of the target square
         :param col: The col of the target square
         :param neighbors_list: A set containing all of the neighbors found thusfar
-        :return: A set of the all of the neighbors starting from (0,0) of the same color
+        :return: A set of the all of the neighbors starting from the starting point of the same color
         """
         for neigh_row, neigh_col in self.find_neighbors(row, col):
 
@@ -129,12 +138,12 @@ class Board:
                     print(f'Joker found at cell ({neigh_row}, {neigh_col})!')
 
                     # Add all immediate neighbors to the list of cells to be colored
-                    for neighbor in  self.find_adjacent_neighbors(neigh_row, neigh_col):
+                    for neighbor in self.find_adjacent_neighbors(neigh_row, neigh_col):
                         neighbors_list.add(neighbor)
-                    self.joker_locations.remove((neigh_row, neigh_col)) # disallow multiple discovery
+                    self.joker_locations.remove((neigh_row, neigh_col))  # disallow multiple discovery
 
                 neighbors_list.add((neigh_row, neigh_col))
-                self.find_extended_neighbors(neigh_row, neigh_col, neighbors_list, color)
+                self.find_extended_neighbors(neigh_row, neigh_col, neighbors_list)
 
         return neighbors_list
 
@@ -147,50 +156,50 @@ class Board:
         for row, col in neighbors:
             self.color_one_square(row, col, color)
 
-    def color_one_square(self, x, y, color):
-        self.board[x][y] = color
+    def color_one_square(self, row, col, color):
+        self.board[row][col] = color
 
-    def find_neighbors(self, x, y):
+    def find_neighbors(self, row, col):
         """
         Given the coordinates of a target square, finds the neighbors based on the stored mode.
         Possible modes are 'regular' and 'knight'
         """
         if self.mode == Board.KNIGHT:
-            return self.find_knight_neighbors(x, y)
+            return self.find_knight_neighbors(row, col)
         else:
-            return self.find_adjacent_neighbors(x, y)
+            return self.find_adjacent_neighbors(row, col)
 
-    def find_knight_neighbors(self, x, y):
+    def find_knight_neighbors(self, row, col):
         """
         Given the coordinates of a square, finds a list of all of the knight neighbors on the board
-        :param x: The X-coordinate of the target square
-        :param y: The Y-coordinate of the target square
+        :param row: The X-coordinate of the target square
+        :param col: The Y-coordinate of the target square
         :return: A list of (x, y) tuples representing all adjacent neighbors
         """
         neighbors = [
-        (x-1, y-2), (x-1, y+2), (x-2, y-1), (x-2, y+1),
-        (x+1, y-2), (x+1, y+2), (x+2, y-1), (x+2, y+1)
+            (row - 1, col - 2), (row - 1, col + 2), (row - 2, col - 1), (row - 2, col + 1),
+            (row + 1, col - 2), (row + 1, col + 2), (row + 2, col - 1), (row + 2, col + 1)
         ]
         output = []
-        for x, y in neighbors:
-            if x >= 0 and x < self.width and y >= 0 and y < self.height:
-                output.append((x, y))
+        for row, col in neighbors:
+            if 0 <= row < self.width and 0 <= col < self.height:
+                output.append((row, col))
         return output
 
-    def find_adjacent_neighbors(self, x, y):
+    def find_adjacent_neighbors(self, row, col):
         """
         Given the coordinates of a square, finds a list of all of the adjacent neighbors on the board
-        :param x: The X-coordinate of the target square
-        :param y: The Y-coordinate of the target square
+        :param row: The X-coordinate of the target square
+        :param col: The Y-coordinate of the target square
         :return: A list of (x, y) tuples representing all adjacent neighbors
         """
         neighbors = []
-        if x > 0:
-            neighbors.append((x - 1, y))
-        if x < self.width - 1:
-            neighbors.append((x + 1, y))
-        if y > 0:
-            neighbors.append((x, y - 1))
-        if y < self.height - 1:
-            neighbors.append((x, y + 1))
+        if row > 0:
+            neighbors.append((row - 1, col))
+        if row < self.width - 1:
+            neighbors.append((row + 1, col))
+        if col > 0:
+            neighbors.append((row, col - 1))
+        if col < self.height - 1:
+            neighbors.append((row, col + 1))
         return neighbors

@@ -50,17 +50,7 @@ class PriorityQueue(DataStruct):
     the lowest priority
     """
 
-    def __init__(self):
-        super().__init__()
-        self.init = False
-
     def push(self, item, priority=None):
-        if not self.init:
-            self.init = True
-            try:
-                item < item
-            except:
-                item.__class__.__lt__ = lambda x, y: (True)
         pair = (priority, item)
         heapq.heappush(self.list, pair)
 
