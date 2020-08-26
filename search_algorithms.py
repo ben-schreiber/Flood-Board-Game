@@ -1,4 +1,5 @@
 from data_structures import *
+from heuristics import Heuristics
 
 
 def search_helper(problem, data_struct):
@@ -24,12 +25,6 @@ def search_helper(problem, data_struct):
 def depth_first_search(problem):
     """
     Search the deepest nodes in the search tree first.
-
-    Your search algorithm needs to return a list of actions that reaches
-    the goal. Make sure to implement a graph search algorithm.
-
-    To get started, you might want to try some of these simple commands to
-    understand the search problem that is being passed in:
     """
     return search_helper(problem, Stack())
 
@@ -48,15 +43,7 @@ def uniform_cost_search(problem):
     return a_star_search(problem)
 
 
-def null_heuristic(state, problem=None):
-    """
-    A heuristic function estimates the cost from the current state to the nearest
-    goal in the provided SearchProblem.  This heuristic is trivial.
-    """
-    return 0
-
-
-def a_star_search(problem, heuristic=null_heuristic):
+def a_star_search(problem, null=False):
     """
     Search the node that has the lowest combined cost and heuristic first.
     """
@@ -76,12 +63,13 @@ def a_star_search(problem, heuristic=null_heuristic):
             for successor in problem.get_successors(temp_state):
                 str_state = str(successor[0])
                 if str_state not in visited:
+                    heuristic_obj = Heuristics(successor[0])
                     visited[str_state] = temp_state, successor[1]
                     new_total_cost = total_cost + successor[2]
-                    p_queue.push((successor[0], new_total_cost), new_total_cost + heuristic(successor[0], problem))
+                    p_queue.push((successor[0], new_total_cost), new_total_cost + heuristic_obj.get_weighted_sum(null=null))
 
 
-def run_search_algorithm(algo_name, problem, heuristic=null_heuristic):
+def run_search_algorithm(algo_name, problem, heuristic=False):
     if algo_name == 'bfs':
         return breadth_first_search(problem)
     elif algo_name == 'dfs':
