@@ -20,6 +20,7 @@ def search_helper(problem, data_struct):
                 if successor[0] not in visited:
                     data_struct.push(successor[0])
                     visited[successor[0]] = temp, successor[1]  # Key=State, Value=(PrevState, Action)
+    return visited.keys()
 
 
 def depth_first_search(problem):

@@ -116,12 +116,12 @@ class Heuristics:
         corner_dist = self.distance_to_corner()
         total_covered = self.number_uncovered()
 
-        perimeter_weight = 1
+        perimeter_weight = 0.75
         border_weight = 1
-        corner_dist_weight = 1
+        corner_dist_weight = 1.5
         total_covered_weight = 1
 
-        return perimeter * perimeter_weight + border * border_weight + corner_dist * corner_dist_weight + total_covered * total_covered_weight
+        return (perimeter * perimeter_weight + border * border_weight + corner_dist * corner_dist_weight + total_covered * total_covered_weight) / 20
 
 
 if __name__ == "__main__":

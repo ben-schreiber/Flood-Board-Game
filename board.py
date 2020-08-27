@@ -1,6 +1,9 @@
 from random import choice, sample, seed
+from copy import deepcopy
+from search_algorithms import depth_first_search
+from search_problems import FindConqueredProblem
 
-seed(0)
+seed(1)
 
 
 class Board:
@@ -14,21 +17,26 @@ class Board:
     KNIGHT_MODE_ON_MSG = 'Knight mode toggled on!'
     KNIGHT_MODE_OFF_MSG = 'Knight mode toggled off!'
 
-    def __init__(self, size=(18, 18), starting_point=(0, 0), jokers=0):
+    def __init__(self, size=(18, 18), starting_point=(0, 0), jokers=0, copy=False):
         self.height, self.width = size
-        self.starting_point = starting_point
+        self.starting_point = tuple(starting_point)
+
         if starting_point[0] < 0 or starting_point[0] >= self.height or \
                 starting_point[1] < 0 or starting_point[1] >= self.width:
             self.starting_point = (0, 0)
-        self.board = self.__init_random_board()
-        self.jokers = jokers
+
+        if copy:  # If we are calling the constructor to copy the object, we will assign the board in the calling function
+            self.board = None
+        else:
+            self.board = self.__init_random_board()
+
+        self.jokers = int(jokers)
         if jokers > 0:
             self.joker_locations = self.__init_random_jokers()
         self.mode = Board.NORMAL
 
     def copy(self):
-        from copy import deepcopy
-        new_board = Board((self.height, self.width), self.starting_point, self.jokers)
+        new_board = Board((self.height, self.width), self.starting_point, self.jokers, copy=True)
         new_board.board = deepcopy(self.board)
         new_board.mode = self.mode
         if self.jokers > 0:
@@ -116,7 +124,8 @@ class Board:
         Applies the given color to the board
         :param color: A color in the form of a single char
         """
-        all_neighbors = self.find_extended_neighbors(self.starting_point[0], self.starting_point[1], {self.starting_point})
+        all_neighbors = self.find_extended_neighbors_search()
+        # all_neighbors = self.find_extended_neighbors(self.starting_point[0], self.starting_point[1], {self.starting_point})
         self.color_neighbors(all_neighbors, color)
 
     def find_extended_neighbors(self, row, col, neighbors_list):
@@ -146,6 +155,10 @@ class Board:
                 self.find_extended_neighbors(neigh_row, neigh_col, neighbors_list)
 
         return neighbors_list
+
+    def find_extended_neighbors_search(self):
+        problem = FindConqueredProblem(self, self.mode == Board.KNIGHT)
+        return depth_first_search(problem)
 
     def color_neighbors(self, neighbors, color):
         """
@@ -189,9 +202,9 @@ class Board:
     def find_adjacent_neighbors(self, row, col):
         """
         Given the coordinates of a square, finds a list of all of the adjacent neighbors on the board
-        :param row: The X-coordinate of the target square
-        :param col: The Y-coordinate of the target square
-        :return: A list of (x, y) tuples representing all adjacent neighbors
+        :param row: The Row-coordinate of the target square
+        :param col: The Column-coordinate of the target square
+        :return: A list of (row, col) tuples representing all adjacent neighbors
         """
         neighbors = []
         if row > 0:

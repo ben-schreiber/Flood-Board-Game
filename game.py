@@ -13,7 +13,7 @@ class Game:
     def __init__(self, size=(18, 18), starting_point=(0, 0), move_allowance=21, num_jokers=0):
         self.board = Board(size, starting_point, num_jokers)
         self.move_num = 0
-        self.move_allowance = move_allowance
+        self.move_allowance = int(move_allowance)
 
     def one_turn(self):
         """
@@ -80,15 +80,17 @@ class Game:
         """
         from search_problems import FillProblem
         from search_algorithms import run_search_algorithm
+        from time import time
+        start = time()
         problem = FillProblem(self.board)
         moves = run_search_algorithm(agent_name, problem, heuristic_name == 'null')
         for move in moves:
             self.board.apply_color_move(move)
             self.move_num += 1
-            print(f'Applying the color {move} to the board...')
-            print(self.board)
+        print(f'Moves taken: {moves}')
         print(f'Number of nodes expanded: {problem.expanded}')
         print(f'Number of moves required: {len(moves)}')
+        print(f'Solution found in {time() - start} seconds')
 
 
 if __name__ == "__main__":
@@ -100,7 +102,7 @@ if __name__ == "__main__":
     parser.add_argument('-m', '--move_allowance', dest='move_allow', type=int, default=21)
     parser.add_argument('-j', '--num_jokers', dest='jokers', type=int, default=0)
     parser.add_argument('--search_method', dest='search', type=str, default=None)
-    parser.add_argument('--heuristic', dest='heuristic', type=str, default=None)
+    parser.add_argument('--heuristic', dest='heuristic', type=str, default='true')
     args = parser.parse_args()
 
     game = Game(args.size, args.start_point, args.move_allow, args.jokers)
