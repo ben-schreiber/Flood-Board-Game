@@ -3,7 +3,7 @@ from copy import deepcopy
 from search_algorithms import depth_first_search
 from search_problems import FindConqueredProblem
 
-seed(1)
+seed(2)
 
 
 class Board:
@@ -124,8 +124,8 @@ class Board:
         Applies the given color to the board
         :param color: A color in the form of a single char
         """
-        all_neighbors = self.find_extended_neighbors_search()
-        # all_neighbors = self.find_extended_neighbors(self.starting_point[0], self.starting_point[1], {self.starting_point})
+        # all_neighbors = self.find_extended_neighbors_search()
+        all_neighbors = self.find_extended_neighbors(self.starting_point[0], self.starting_point[1], {self.starting_point})
         self.color_neighbors(all_neighbors, color)
 
     def find_extended_neighbors(self, row, col, neighbors_list):
@@ -157,6 +157,7 @@ class Board:
         return neighbors_list
 
     def find_extended_neighbors_search(self):
+        """Finds the extended neighbors of the starting point. Does so using DFS search"""
         problem = FindConqueredProblem(self, self.mode == Board.KNIGHT)
         return depth_first_search(problem)
 

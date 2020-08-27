@@ -1,4 +1,6 @@
 from board import Board
+from search_problems import FillProblem
+from search_algorithms import run_search_algorithm
 
 
 class Game:
@@ -26,12 +28,18 @@ class Game:
         if user_input.upper() in Board.COLORS:  # If the user wants to color the board
             self.board.apply_color_move(user_input.upper())
             self.move_num += 1
+            print(self.board)
         elif user_input in Game.HOTKEYS:  # If we have a special input
             if user_input == Game.KNIGHT_HOTKEY:
                 self.board.toggle_mode()
-            # elif user_input == Game.HINT_HOTKEY:
+            elif user_input == Game.HINT_HOTKEY:
+                hint_letter = self.get_hint()
+                print(f'The AI agent suggests you play: {hint_letter.upper()}')
 
-        print(self.board)
+    def get_hint(self):
+        problem = FillProblem(self.board)
+        moves = run_search_algorithm('dfs', problem)
+        return moves[0]
 
     @staticmethod
     def __invalid_input_msg():
@@ -78,8 +86,6 @@ class Game:
         :param agent_name: A string with the name of the search algorithm
         :param heuristic_name: A string with the name of the heuristic to use
         """
-        from search_problems import FillProblem
-        from search_algorithms import run_search_algorithm
         from time import time
         start = time()
         problem = FillProblem(self.board)
