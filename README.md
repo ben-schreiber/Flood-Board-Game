@@ -19,7 +19,7 @@ chess piece Knight's movement. Using the original example from above, playing th
 `B B R`\
 Additionally, the user is able to request a hint from the AI agent before any turn in the game.\
 Furthermore, the user can choose to have jokers placed in the board at the onset of the game. When a joker is encountered (which occurs when the cell at 
-which the joker is located has its color changed), all immediate neighbors -- regardless of the current color -- are colored along with the rest of the squares being
+which the joker is located has its color changed), all immediate neighbors of the joker -- regardless of their current color -- are colored along with the rest of the squares being
 colored that turn. 
 
 ### Command Line Usage
