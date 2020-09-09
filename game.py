@@ -154,14 +154,14 @@ class GUI:
         font = pg.font.SysFont('comicsans', 28)
 
         moves_made_header = font.render('Moves Made:', 1, (0, 0, 0))
-        self.window.blit(moves_made_header, (self.width * self.square_size, 10))
+        self.window.blit(moves_made_header, (self.width * self.square_size + 5, 10))
         moves_made_text = font.render(f'{self.game.move_num} / {self.game.move_allowance}', 1, (0, 0, 0))
-        self.window.blit(moves_made_text, (self.width * self.square_size, 30))
+        self.window.blit(moves_made_text, (self.width * self.square_size + 5, 30))
 
         moves_remaining_header = font.render('Moves Left:', 1, (0, 0, 0))
-        self.window.blit(moves_remaining_header, (self.width * self.square_size, 70))
+        self.window.blit(moves_remaining_header, (self.width * self.square_size + 5, 70))
         moves_remaining_text = font.render(f'{self.game.move_allowance - self.game.move_num}', 1, (0, 0, 0))
-        self.window.blit(moves_remaining_text, (self.width * self.square_size, 90))
+        self.window.blit(moves_remaining_text, (self.width * self.square_size + 5, 90))
 
         if game_over:
             font = pg.font.SysFont('comicsans', 150, True)
@@ -196,8 +196,8 @@ class GUI:
             event = pg.event.wait()
             if event.type == pg.QUIT:  # Check to see if the user hit the 'Exit' button
                 self.playing = False
-            elif event.type == pg.KEYDOWN:
 
+            elif event.type == pg.KEYDOWN:
                 user_input = self.get_user_input(event)
                 if user_input is not GUI.INVALID_INPUT:  # If the user inputted a valid input
                     if user_input == self.game.KNIGHT_HOTKEY:
