@@ -21,4 +21,13 @@ Additionally, the user is able to request a hint from the AI agent before any tu
 
 ### Command Line Usage
 Running the command `python game.py` with no additional arguments will allow
-the user to play the game through the graphical user interface (GUI). 
+the user to play the game through the graphical user interface (GUI). \
+There are a hanful of useful command line options at the user's discretion:
+1) `-s` or `--size` control the (height, width) size of the board `-> (int, int)`
+2) `-p` or `--starting_point` control at which coordinate the flood fill begins `-> (int, int)`
+3) `-m` or `--move_allowance` control the number of moves the user is allowed in one game `-> int`
+4) `-j` or `--num_jokers` control the number of jokers in the board `-> int`
+5) `-g` or `--gui` control whether or not there is a GUI `-> bool`
+6) `--search_method` controls if and which search method to use to find a solution sequence `-> str`
+7) `--heuristic` controls if and which heuristic to use in the A* search `-> str`
+
