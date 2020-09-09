@@ -3,7 +3,7 @@ from copy import deepcopy
 from search_algorithms import depth_first_search
 from search_problems import FindConqueredProblem
 
-seed(2)
+# seed(2)
 
 
 class Board:
@@ -52,13 +52,15 @@ class Board:
         new_board.board = rotated_board
         return new_board
 
-    def toggle_mode(self):
+    def toggle_mode(self, print_message=True):
         """Toggles the game mode between normal and knight"""
         if self.mode == Board.NORMAL:
-            print(Board.KNIGHT_MODE_ON_MSG)
+            if print_message:
+                print(Board.KNIGHT_MODE_ON_MSG)
             self.mode = Board.KNIGHT
         elif self.mode == Board.KNIGHT:
-            print(Board.KNIGHT_MODE_OFF_MSG)
+            if print_message:
+                print(Board.KNIGHT_MODE_OFF_MSG)
             self.mode = Board.NORMAL
 
     def __init_random_jokers(self):
